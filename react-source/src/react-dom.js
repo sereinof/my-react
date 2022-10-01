@@ -2,15 +2,19 @@ import { REACT_TEXT } from "./stants";
 
 function render(vnode, container) {
     let newDom = createDom(vnode);//感觉这里应该返回一个document Fragment才好
+    debugger
     container.appendChild(newDom);
 };
 
 function createDom(vdom) {
-    let { type, props,content } = vdom;
+    let { type, props, content } = vdom;
     let dom;//真实的dom;
     //判断type是文本还是元素
     if (type == REACT_TEXT) {
         dom = document.createTextNode(content)
+    } else if (typeof type === 'function') {
+        //处理函数式组件
+        return renderFunctionalComponent(vdom);
     } else {//元素
         dom = document.createElement(type);
     };
@@ -25,15 +29,26 @@ function createDom(vdom) {
     return dom;
 };
 
+function renderFunctionalComponent(functionComponent) {
+    let { type, props } = functionComponent;
+    let functionalVnode = type(props);
+    debugger
+    return createDom(functionalVnode);
+
+}
+
 function processChildren(children, dom) {
     //有一个儿子，或者有多个儿子
     if (typeof children === 'object' && children.type) {
         //一个儿子，注意文 本节点也会被包装成对象
-        render(children,dom);
-    }else if(Array.isArray(children)){
-        children.forEach((child)=>{
-            render(child,dom);
+        render(children, dom);
+    } else if (Array.isArray(children)) {
+        children.forEach((child) => {
+            render(child, dom);
         });
+    }else if(typeof children==='string'){
+         let newDom =  document.createTextNode(children);
+         dom.appendChild(newDom);
     };
 }
 
