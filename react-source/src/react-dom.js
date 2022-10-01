@@ -7,13 +7,19 @@ function render(vnode, container) {
 };
 
 function createDom(vdom) {
+    if (typeof vdom === 'string' || typeof vdom === 'number') {
+        return document.createTextNode(vdom);
+    };
     let { type, props, content } = vdom;
     let dom;//真实的dom;
     //判断type是文本还是元素
     if (type == REACT_TEXT) {
         dom = document.createTextNode(content)
-    } else if (typeof type === 'function') {
+    } else if (typeof type === 'function') {//函数式组件和类组件都会进来，看如何区分
         //处理函数式组件
+        if (type.isReactClassComponent) {
+            return renderClassComponent(vdom);
+        };
         return renderFunctionalComponent(vdom);
     } else {//元素
         dom = document.createElement(type);
@@ -28,6 +34,14 @@ function createDom(vdom) {
     };
     return dom;
 };
+
+function renderClassComponent(classComponent) {
+    let { type, props } = classComponent;
+    //此处的type应该是一个类；
+    let classInstance = new type(props);
+    let classVnode = classInstance.render();
+    return createDom(classVnode)
+}
 
 function renderFunctionalComponent(functionComponent) {
     let { type, props } = functionComponent;
@@ -46,9 +60,9 @@ function processChildren(children, dom) {
         children.forEach((child) => {
             render(child, dom);
         });
-    }else if(typeof children==='string'){
-         let newDom =  document.createTextNode(children);
-         dom.appendChild(newDom);
+    } else if (typeof children === 'string' || typeof children === 'number') {
+        let newDom = document.createTextNode(children);
+        dom.appendChild(newDom);
     };
 }
 

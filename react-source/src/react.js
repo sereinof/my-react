@@ -1,5 +1,6 @@
 import { REACT_ELEMENT } from "./stants";
 import { toObject } from "./util";
+import { Component } from "./Component";
 
 function createElement(type, config, children) {
     let props = { ...config };
@@ -35,5 +36,6 @@ function createElement(type, config, children) {
 
 const React = {
     createElement,
+    Component,
 }
 export default React;
