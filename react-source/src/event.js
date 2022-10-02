@@ -21,8 +21,30 @@ function dispatchEvent(event) {
     let eventType = `on${type}`;
     let { store } = target;
     let handler = store && store[eventType];
+
+    let SyntheticBaseEvent = createBaseEvent(event);
+
     updateQueue.isBatchData = true;
-    handler && handler(event);
+    handler && handler(SyntheticBaseEvent);
     updateQueue.isBatchData = false;
     updateQueue.batchUpdate();
 };
+//事件对象需要做兼容 兼容IE浏览器
+function createBaseEvent(nativeEvent) {
+    let SyntheticBaseEvent = {};
+    for (let key in nativeEvent) {
+        SyntheticBaseEvent[key] = nativeEvent[key];
+
+    };
+    SyntheticBaseEvent.nativeEvent = nativeEvent;
+    SyntheticBaseEvent.preventDefault = preventDefault(nativeEvent)
+    return SyntheticBaseEvent;
+}
+function preventDefault(event) {
+    if (!event) {
+        window.event.returnValue = false
+    }
+    if (event.preventDefault) {
+        event.preventDefault();
+    }
+}

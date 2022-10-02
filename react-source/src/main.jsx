@@ -3,7 +3,6 @@ import React from './react'
 import ReactDOM from './react-dom';
 import App from './App'
 import './index.css';
-import { updateQueue } from './Component';
 class MyComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -13,9 +12,8 @@ class MyComponent extends React.Component {
       })
     }, 2000)
   }
-  handleClck = () => {
-    updateQueue.isBatchData = true;
-
+  handleClck = (event) => {
+    debugger
 
     this.setState({
       count: this.state.count + 1,
@@ -23,8 +21,7 @@ class MyComponent extends React.Component {
     this.setState({
       count: this.state.count + 1
     });
-    updateQueue.isBatchData = false;
-    updateQueue.batchUpdate();
+
   }
 
   render() {
