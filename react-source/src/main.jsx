@@ -6,11 +6,7 @@ import './index.css';
 class MyComponent extends React.Component {
   constructor(props) {
     super(props);
-    setTimeout(() => {
-      this.setState({
-        messager: '早上好，周玉庆'
-      })
-    }, 2000)
+    this.a = React.createRef();
   }
   handleClck = (event) => {
     debugger
@@ -18,14 +14,12 @@ class MyComponent extends React.Component {
     this.setState({
       count: this.state.count + 1,
     });
-    this.setState({
-      count: this.state.count + 1
-    });
+
 
   }
 
   render() {
-    return <h1 onClick={this.handleClck} >54突然{this.state.count}</h1>
+    return <h1 ref={this.a} onClick={this.handleClck} >54突然{this.state.count}</h1>
   }
 }
 

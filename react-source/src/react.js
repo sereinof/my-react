@@ -4,13 +4,13 @@ import { Component } from "./Component";
 
 function createElement(type, config, children) {
     let props = { ...config };
-    let key,ref=null;
+    let key, ref = null;
     key = null
-    if(config){
-        key = config.key??null;
-        ref = config.ref??null;
-        Reflect.deleteProperty(config,'key');
-        Reflect.deleteProperty(config,'ref');
+    if (config) {
+        key = config.key ?? null;
+        ref = config.ref ?? null;
+        Reflect.deleteProperty(config, 'key');
+        Reflect.deleteProperty(config, 'ref');
     }
     if (config) {
         //1. 没有children
@@ -26,16 +26,19 @@ function createElement(type, config, children) {
         }
     }
     return {//传说中的vnode
-        $$typeof:REACT_ELEMENT,
+        $$typeof: REACT_ELEMENT,
         key,
         ref,
         type,
         props,
     }
 };
-
+function createRef() {
+    return { current: null };
+}
 const React = {
     createElement,
     Component,
+    createRef,
 }
 export default React;

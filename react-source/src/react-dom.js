@@ -10,7 +10,7 @@ function createDom(vdom) {
     if (typeof vdom === 'string' || typeof vdom === 'number') {
         return document.createTextNode(vdom);
     };
-    let { type, props, content } = vdom;
+    let { type, props, content ,ref} = vdom;
     let dom;//真实的dom;
     //判断type是文本还是元素
     if (type == REACT_TEXT) {
@@ -35,6 +35,9 @@ function createDom(vdom) {
     };
     vdom.dom = dom;//这里比较难以理解，就是平级的对应，因为dom就是由vnode产生了，所以dom是vnode的一种
     //实体，而vnode是对dom的一种高度抽象概括，
+    if (ref) {
+        ref.current = dom;
+    }
     return dom;//
 };
 
