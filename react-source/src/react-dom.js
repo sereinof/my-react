@@ -26,7 +26,6 @@ function createDom(vdom) {
         dom = document.createElement(type);
     };
     if (props) {//添加属性
-        debugger
         updateProps(dom, {}, props);//真实的dom,旧的属性，新的属性
         let children = props.children;
         if (children) {
@@ -46,8 +45,7 @@ function renderClassComponent(classComponent) {
     let fixVnode = {};//由于使用的是Babel编译的vnode所以则需要拷贝，因为Babel做了freeze处理
     for (let i in classVnode) {
         fixVnode[i] = classVnode[i];
-    }
-    debugger
+    };
     classInstance.oldVnode = fixVnode;//保存静态vnode
     return createDom(fixVnode);
 }
@@ -83,9 +81,9 @@ function updateProps(dom, oldProps, newProps) {
             for (let styleKey in styleObject) {
                 dom.style[styleKey] = styleObject[styleKey];
             };
-        } else if(key.startsWith('on')){//处理事件
-
-        }else{
+        } else if (key.startsWith('on')) {//处理事件
+            dom.addEventListener('click', newProps[key])
+        } else {
 
         };
     };
@@ -115,17 +113,16 @@ const ReactDOM = function () {
 };
 
 export function simplyReplaceOldDom(parentDom, oldDom, newVnode) {
-    let newDom = createDom(cloneBabelVnode(newVnode));//老的dom是存储在老的vnode里面的，
-    debugger
+    let newDom = createDom(newVnode);//老的dom是存储在老的vnode里面的，
     parentDom.replaceChild(newDom, oldDom);//🤔️
 }
 
-function cloneBabelVnode(BableVnode){
-    if(typeof BableVnode ==='string'){
+ export  function cloneBabelVnode(BableVnode) {
+    if (typeof BableVnode === 'string') {
         return BableVnode;
     }
     let ret = {};
-    Object.keys(BableVnode).forEach((key)=>{
+    Object.keys(BableVnode).forEach((key) => {
         ret[key] = BableVnode[key];
     })
     return ret;

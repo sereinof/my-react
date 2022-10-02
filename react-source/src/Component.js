@@ -1,4 +1,5 @@
-import { simplyReplaceOldDom } from './react-dom'
+import { simplyReplaceOldDom } from './react-dom';
+import {cloneBabelVnode }from './react-dom';
 class Updater {
     constructor(classInstance) {
         this.classInstance = classInstance;
@@ -19,7 +20,6 @@ class Updater {
         }
     }
     getState() {
-        debugger
         let { classInstance: { state } } = this;
         this.peddingState.forEach((nextState) => {
             state = { ...state, ...nextState };
@@ -38,7 +38,7 @@ export class Component {
     //用来与函数式组件区分开来
     constructor(props) {
         this.props = props;
-        this.state = {};
+        this.state = props;//先这样吧
         //还有一个更新器
         this.updater = new Updater(this);
     };
@@ -47,11 +47,14 @@ export class Component {
         this.updater.addState(partialState);
     }
     forceUpdete() {
-        let newVnode = this.render();//这里直接调用render有很大的问题
+        let newVnode = cloneBabelVnode(this.render());//这里直接调用render有很大的问题
+        //由于render方法返回的是一个Babelvnode,需要自己拷贝一下
         //一个是state的变化可以体现，但是样式信息就会失去，
         let oldVnode = this.oldVnode;    //初始化的时候有这个东西
         let oldDom = oldVnode.dom;
-        debugger
-        simplyReplaceOldDom(oldDom.parentNode,oldDom,newVnode)
+
+        simplyReplaceOldDom(oldDom.parentNode, oldDom, newVnode);
+        //需要跟新vnode上的dombi
+        this.oldVnode = newVnode;
     }
 }

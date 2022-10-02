@@ -6,20 +6,24 @@ import './index.css'
 class MyComponent extends React.Component {
   constructor(props) {
     super(props);
-    setTimeout(()=>{
+    setTimeout(() => {
       this.setState({
-        messager:'早上好，周玉庆'
+        messager: '早上好，周玉庆'
       })
-    },2000)
+    }, 2000)
+  }
+  handleClck = () => {
+    this.setState({
+      messager: `早上好，周玉庆${new Date().getTime()}`
+    })
   }
 
-  render(){
-    return <h1>54突然{this.props.messager}</h1>
+  render() {
+    return <h1 onClick={this.handleClck} >54突然{this.state.messager}</h1>
   }
 }
 
 let element1 = <MyComponent messager='下午好、周羽庆' style={{ color: 'red' }}></MyComponent>;
-debugger
 ReactDOM.createRoot(document.getElementById('root')).render(
   element1
 )
