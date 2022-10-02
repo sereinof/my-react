@@ -34,7 +34,8 @@ function createElement(type, config, children) {
     }
 };
 function createRef() {
-    return { current: null };
+    return { current: null };//吐槽一下，当ref是在dom上定义的时候，用户需要获取真实dom,当是类组件的时候
+    //用户希望获得的是类的实例，调用其方法啥的
 }
 const React = {
     createElement,

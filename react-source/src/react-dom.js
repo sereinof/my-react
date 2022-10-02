@@ -10,7 +10,7 @@ function createDom(vdom) {
     if (typeof vdom === 'string' || typeof vdom === 'number') {
         return document.createTextNode(vdom);
     };
-    let { type, props, content ,ref} = vdom;
+    let { type, props, content, ref } = vdom;
     let dom;//真实的dom;
     //判断type是文本还是元素
     if (type == REACT_TEXT) {
@@ -35,16 +35,19 @@ function createDom(vdom) {
     };
     vdom.dom = dom;//这里比较难以理解，就是平级的对应，因为dom就是由vnode产生了，所以dom是vnode的一种
     //实体，而vnode是对dom的一种高度抽象概括，
-    if (ref) {
+    if (ref && !type.isReactClassComponent) {
         ref.current = dom;
     }
     return dom;//
 };
 
 function renderClassComponent(classComponent) {
-    let { type, props } = classComponent;
+    let { type, props, ref } = classComponent;
     //此处的type应该是一个类；
     let classInstance = new type(props);
+    if (ref) {
+        ref.current = classInstance;
+    }
     let classVnode = classInstance.render();
     let fixVnode = {};//由于使用的是Babel编译的vnode所以则需要拷贝，因为Babel做了freeze处理
     for (let i in classVnode) {
