@@ -1,8 +1,7 @@
 import { REACT_TEXT } from "./stants";
 
 function render(vnode, container) {
-    let newDom = createDom(vnode);//感觉这里应该返回一个document Fragment才好
-    debugger
+    let newDom = createDom(cloneBabelVnode(vnode));//感觉这里应该返回一个document Fragment才好
     container.appendChild(newDom);
 };
 
@@ -18,21 +17,25 @@ function createDom(vdom) {
     } else if (typeof type === 'function') {//函数式组件和类组件都会进来，看如何区分
         //处理函数式组件
         if (type.isReactClassComponent) {
-            return renderClassComponent(vdom);
-        };
-        return renderFunctionalComponent(vdom);
+            dom = renderClassComponent(vdom);
+        } else {
+            dom = renderFunctionalComponent(vdom);
+
+        }
     } else {//元素
         dom = document.createElement(type);
     };
     if (props) {//添加属性
-
+        debugger
         updateProps(dom, {}, props);//真实的dom,旧的属性，新的属性
         let children = props.children;
         if (children) {
             processChildren(children, dom);
         }
     };
-    return dom;
+    vdom.dom = dom;//这里比较难以理解，就是平级的对应，因为dom就是由vnode产生了，所以dom是vnode的一种
+    //实体，而vnode是对dom的一种高度抽象概括，
+    return dom;//
 };
 
 function renderClassComponent(classComponent) {
@@ -40,14 +43,19 @@ function renderClassComponent(classComponent) {
     //此处的type应该是一个类；
     let classInstance = new type(props);
     let classVnode = classInstance.render();
-    return createDom(classVnode)
+    let fixVnode = {};//由于使用的是Babel编译的vnode所以则需要拷贝，因为Babel做了freeze处理
+    for (let i in classVnode) {
+        fixVnode[i] = classVnode[i];
+    }
+    debugger
+    classInstance.oldVnode = fixVnode;//保存静态vnode
+    return createDom(fixVnode);
 }
 
 function renderFunctionalComponent(functionComponent) {
     let { type, props } = functionComponent;
     let functionalVnode = type(props);
-    debugger
-    return createDom(functionalVnode);
+    return createDom(cloneBabelVnode(functionalVnode));
 
 }
 
@@ -75,7 +83,9 @@ function updateProps(dom, oldProps, newProps) {
             for (let styleKey in styleObject) {
                 dom.style[styleKey] = styleObject[styleKey];
             };
-        } else {//其他属性
+        } else if(key.startsWith('on')){//处理事件
+
+        }else{
 
         };
     };
@@ -102,5 +112,22 @@ const ReactDOM = function () {
         render(vnode, this.container)
     };
     return this;
+};
+
+export function simplyReplaceOldDom(parentDom, oldDom, newVnode) {
+    let newDom = createDom(cloneBabelVnode(newVnode));//老的dom是存储在老的vnode里面的，
+    debugger
+    parentDom.replaceChild(newDom, oldDom);//🤔️
+}
+
+function cloneBabelVnode(BableVnode){
+    if(typeof BableVnode ==='string'){
+        return BableVnode;
+    }
+    let ret = {};
+    Object.keys(BableVnode).forEach((key)=>{
+        ret[key] = BableVnode[key];
+    })
+    return ret;
 }
 export default new ReactDOM();;
