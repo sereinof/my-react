@@ -1,4 +1,5 @@
 import { REACT_TEXT } from "./stants";
+import addEvent from './event';
 
 function render(vnode, container) {
     let newDom = createDom(cloneBabelVnode(vnode));//感觉这里应该返回一个document Fragment才好
@@ -82,7 +83,10 @@ function updateProps(dom, oldProps, newProps) {
                 dom.style[styleKey] = styleObject[styleKey];
             };
         } else if (key.startsWith('on')) {//处理事件
-            dom.addEventListener('click', newProps[key])
+            //react有强大的事件委托机制，需要实现一下
+            debugger
+            addEvent(dom, key.toLowerCase(), newProps[key]);
+            // dom.addEventListener('click', newProps[key])
         } else {
 
         };
