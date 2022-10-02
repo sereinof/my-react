@@ -1,5 +1,19 @@
 import { simplyReplaceOldDom } from './react-dom';
-import {cloneBabelVnode }from './react-dom';
+import { cloneBabelVnode } from './react-dom';
+
+export const updateQueue = {
+    isBatchData: false,//标识是同步还是异步更新
+    updaters: [],//需要更新的数组
+    batchUpdate() {
+        updateQueue.updaters.forEach((updater) => {
+            updater.updateComponent();
+            updateQueue.isBatchData = false;
+            updateQueue.updaters.length = 0;
+        })
+    },
+
+}
+
 class Updater {
     constructor(classInstance) {
         this.classInstance = classInstance;
@@ -7,11 +21,16 @@ class Updater {
     };
     addState(partialState) {
         this.peddingState.push(partialState);
-        this.emmitUpdate();//更新
+        this.emitUpdate();//更新
     }
-    emmitUpdate() {
+    emitUpdate() {
         //跟新组件
-        this.updateComponent();
+        if (updateQueue.isBatchData) {//异步？
+            updateQueue.updaters.push(this);
+        } else {
+            this.updateComponent();
+
+        };
     }
     updateComponent() {
         //获取到最新的数据

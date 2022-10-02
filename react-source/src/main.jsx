@@ -2,7 +2,8 @@ import React from './react'
 //import ReactDOM from 'react-dom/client';
 import ReactDOM from './react-dom';
 import App from './App'
-import './index.css'
+import './index.css';
+import { updateQueue } from './Component';
 class MyComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -13,17 +14,25 @@ class MyComponent extends React.Component {
     }, 2000)
   }
   handleClck = () => {
+    updateQueue.isBatchData = true;
+
+
     this.setState({
-      messager: `早上好，周玉庆${new Date().getTime()}`
-    })
+      count: this.state.count + 1,
+    });
+    this.setState({
+      count: this.state.count + 1
+    });
+    updateQueue.isBatchData = false;
+    updateQueue.batchUpdate();
   }
 
   render() {
-    return <h1 onClick={this.handleClck} >54突然{this.state.messager}</h1>
+    return <h1 onClick={this.handleClck} >54突然{this.state.count}</h1>
   }
 }
 
-let element1 = <MyComponent messager='下午好、周羽庆' style={{ color: 'red' }}></MyComponent>;
+let element1 = <MyComponent count={1} messager='下午好、周羽庆' style={{ color: 'red' }}></MyComponent>;
 ReactDOM.createRoot(document.getElementById('root')).render(
   element1
 )

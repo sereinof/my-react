@@ -117,8 +117,8 @@ export function simplyReplaceOldDom(parentDom, oldDom, newVnode) {
     parentDom.replaceChild(newDom, oldDom);//🤔️
 }
 
- export  function cloneBabelVnode(BableVnode) {
-    if (typeof BableVnode === 'string') {
+export function cloneBabelVnode(BableVnode) {
+    if (typeof BableVnode === 'string' || typeof BableVnode === 'number') {
         return BableVnode;
     }
     let ret = {};
